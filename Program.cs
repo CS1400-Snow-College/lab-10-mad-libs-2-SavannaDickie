@@ -4,21 +4,33 @@
 // 11/16/2024
 // Lab 10: Madlibs #2
 
-//class Program 
+using System.Security.Cryptography.X509Certificates;
+
+class Program 
 {
-    Dictionary<string, List<string>> WordClasses = new Dictionary<string, List<string>>();
+    
     
         static void Main(string[] filenames)
         {
+            Dictionary<string, List<string>> WordClasses = new Dictionary<string, List<string>>();
+            CategoryClasses(WordClasses);
         foreach (string filename in filenames)
         {
             string story = File.ReadAllText(filename);
-            Console.WriteLine(filename);
-        }
-        }
-}
+            //Console.WriteLine(filename);
+            if(!File.Exists(filename))
+            {
+                Console.WriteLine($"does not exist");
+            }
+            Console.WriteLine(story);
 
-static void CategoryClasses(string story, Dictionary<string, List<string>> WordClasses)
+            string finishedStory = WordClassesReplace(story, WordClasses);
+            
+        }
+        }
+
+
+static void CategoryClasses(Dictionary<string, List<string>> WordClasses)
 {
     WordClasses["past-tense-verb"] = new List<string> { "ran", "flew",  "jumped","swam"};
     WordClasses["verb"] = new List<string> { "run", "fly", "jump", "swim"};
@@ -27,3 +39,51 @@ static void CategoryClasses(string story, Dictionary<string, List<string>> WordC
     WordClasses["adjective"] = new List<string> {"colorful","sleepy","energetic", "happy","sad"};
 
 }
+
+static string WordClassesReplace(string story, Dictionary<string, List<string>> WordClasses)
+{
+    Random rand = new Random();
+    string result = story;
+
+    foreach(var category in WordClasses)
+    {
+        string needsReplacement = "::" + WordClasses.Keys;
+        while (result.Contains(needsReplacement))
+        {
+            string randomWord = category.Value[rand.Next(category.Value.Count)];
+            result = result.Replace(needsReplacement, randomWord);
+        }
+    }
+    return result;
+}
+}
+
+
+
+
+
+// not sure if this is the issue or the main
+/*
+static string WordClassesReplace(string story, Dictionary<string, List<string>> WordClasses)
+{
+    string results = "";
+    string[] words = story.Split(' ');
+    Random rand = new Random();
+    foreach (string word in words)
+    {
+        if(word.Contains("::"))
+        {
+        string replace = word.Substring(2);
+        
+        if(WordClasses.ContainsKey(replace))
+        {
+            string randomWorld = WordClasses[replace][rand.Next(WordClasses[replace].Count)];
+            results += randomWorld + " ";
+        }
+        }
+        //return results;
+    }
+    return results;
+}
+}
+*/
